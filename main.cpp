@@ -6,86 +6,121 @@
 //  Created by Nikitha Srikanth on 16/12/21.
 //
 
-#include <stdio.h>
-#include <openGL/openGL.h>
-#include<GLUT/GLUT.h>
+#define GL_SILENCE_DEPRECATION
+#include<stdio.h>
+#include <GLUT/GLUT.h>
+#include<openGL/openGL.h>
+#include<math.h>
 
-int m;
-typedef float point[3];
-point tetra[4] = { {0,100,-100},{0,0,100},{100,-100,-100},{-100,-100,-100} };
-void myInit() {
-    glClearColor(1.0, 1.0, 1.0, 1.0);
-    glOrtho(-300.0, 300.0, -300.0, 300.0, -300.0, 300.0);
-};
 
-void drawTriangle(point p1, point p2, point p3) {
-    glBegin(GL_TRIANGLES);
-    glVertex3fv(p1);
-    glVertex3fv(p2);
-    glVertex3fv(p3);
-    glEnd();
-}
 
-void drawTetra(point p1, point p2, point p3, point p4) {
-    glColor3f(1.0, 1.0, 0.0);
-    drawTriangle(p1, p2, p3);
+//RIGHT CLICK TO SHOW REFLECTED HOUSE
 
-    glColor3f(0.0, 1.0, 0.0);
-    drawTriangle(p1, p3, p4);
 
-    glColor3f(1.0, 0.0, 0.0);
-    drawTriangle(p1, p4, p2);
-
-    glColor3f(0.0, 0.0, 1.0);
-    drawTriangle(p2, p3, p4);
-}
-
-void divideTetra(point p1, point p2, point p3, point p4, int iter) {
-    point mid[6];
-    int j;
-
-    if (iter > 0) {
-        for (j = 0; j < 3; j++)
-            mid[0][j] = (p1[j] + p2[j]) / 2;
-        for (j = 0; j < 3; j++)
-            mid[1][j] = (p1[j] + p3[j]) / 2;
-        for (j = 0; j < 3; j++)
-            mid[2][j] = (p1[j] + p4[j]) / 2;
-        for (j = 0; j < 3; j++)
-            mid[3][j] = (p2[j] + p3[j]) / 2;
-        for (j = 0; j < 3; j++)
-            mid[4][j] = (p3[j] + p4[j]) / 2;
-        for (j = 0; j < 3; j++)
-            mid[5][j] = (p2[j] + p4[j]) / 2;
-
-        divideTetra(p1, mid[0], mid[1], mid[2], iter - 1);
-        divideTetra(mid[0], p2, mid[3], mid[5], iter - 1);
-        divideTetra(mid[1], mid[3], p3, mid[4], iter - 1);
-        divideTetra(mid[2], mid[4], p4, mid[5], iter - 1);
-    } else {
-        drawTetra(p1, p2, p3, p4);
-    }
-}
-void display() {
+float house[11][2] = { { 100,200 },{ 200,250 },{ 300,200 },{ 100,200 },{ 100,100 },{ 175,100 },{ 175,150 },{ 225,150 },{ 225,100 },{ 300,100 },{ 300,200 } };
+int angle;
+float m, c, theta;
+void display()
+{
+    glClearColor(1, 1, 1, 0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glBegin(GL_TRIANGLES);
-    divideTetra(tetra[0], tetra[1], tetra[2], tetra[3], 5);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluOrtho2D(-450, 450, -450, 450);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    //NORMAL HOUSE
+    glColor3f(1, 0, 0);
+    glBegin(GL_LINE_LOOP);
+    for (int i = 0; i < 11; i++)
+        glVertex2fv(house[i]);
     glEnd();
     glFlush();
+    //ROTATED HOUSE
+    glPushMatrix();
+    glTranslatef(100, 100, 0);
+    glRotatef(angle, 0, 0, 1);
+    glTranslatef(-100, -100, 0);
+    glColor3f(1, 1, 0);
+    glBegin(GL_LINE_LOOP);
+    for (int i = 0; i < 11; i++)
+        glVertex2fv(house[i]);
+    glEnd();
+    glPopMatrix();
+    glFlush();
 }
-int main(int argv, char** argc)
+void display2()
 {
-    //int m;
-    printf("Enter the number of iterations: ");
-    scanf("%d", &m);
-    glutInit(&argv, argc);
-    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB | GLUT_DEPTH);
-    glutInitWindowPosition(100, 200);
-    glutInitWindowSize(500, 500);
-    glutCreateWindow("Seirpinski Gasket");
-    glutDisplayFunc(display);
-    glEnable(GL_DEPTH_TEST);
+    glClearColor(1, 1, 1, 0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluOrtho2D(-450, 450, -450, 450);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    //normal house
+    glColor3f(1, 0, 0);
+    glBegin(GL_LINE_LOOP);
+    for (int i = 0; i < 11; i++)
+        glVertex2fv(house[i]);
+    glEnd();
+    glFlush();
+    // line
+    float x1 = 0, x2 = 500;
+    float y1 = m * x1 + c;
+    float y2 = m * x2 + c;
+    glColor3f(1, 1, 0);
+    glBegin(GL_LINES);
+    glVertex2f(x1, y1);
+    glVertex2f(x2, y2);
+    glEnd();
+    glFlush();
+
+    //Reflected
+    glPushMatrix();
+    glTranslatef(0, c, 0);
+    theta = atan(m);
+    theta = theta * 180 / 3.14;
+    glRotatef(theta, 0, 0, 1);
+    glScalef(1, -1, 1);
+    glRotatef(-theta, 0, 0, 1);
+    glTranslatef(0, -c, 0);
+    glBegin(GL_LINE_LOOP);
+    for (int i = 0; i < 11; i++)
+        glVertex2fv(house[i]);
+    glEnd();
+    glPopMatrix();
+    glFlush();
+}
+void myInit() {
+    glClearColor(1.0, 1.0, 1.0, 1.0);
+    glColor3f(1.0, 0.0, 0.0);
+    glLineWidth(2.0);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluOrtho2D(-450, 450, -450, 450);
+}
+void mouse(int btn, int state, int x, int y) {
+    if (btn == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
+        display();
+    }
+    else if (btn == GLUT_RIGHT_BUTTON && state == GLUT_DOWN) {
+        display2();
+    }
+}
+int main(int argc, char** argv)
+{
+    printf("Enter the rotation angle\n");
+    scanf("%d", &angle);
+    printf("Enter c and m value for line y=mx+c\n");
+    scanf("%f %f", &c, &m);
+    glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
+    glutInitWindowSize(900, 900);
+    glutInitWindowPosition(100, 100);
+    glutCreateWindow("House Rotation");
+    glutDisplayFunc(display2);
+    glutMouseFunc(mouse);
     myInit();
     glutMainLoop();
 }
-
