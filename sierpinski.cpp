@@ -1,10 +1,4 @@
 
-//
-//  sierpinski.cpp
-//  Lab
-//
-//  Created by Nikitha Srikanth on 16/12/21.
-//
 
 //#include <stdio.h>
 //#include <openGL/openGL.h>

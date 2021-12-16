@@ -1,11 +1,3 @@
-//
-////
-////  sphere.cpp
-////  Lab
-////
-////  Created by Nikitha Srikanth on 15/12/21.
-////
-//
 //#include <stdio.h>
 //#include <iostream>
 //#include <openGL/openGL.h>

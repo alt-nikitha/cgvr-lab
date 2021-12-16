@@ -1,25 +1,11 @@
 //
-//  bresenhamLine.cpp
-//  Lab
-//
-//  Created by Nikitha Srikanth on 14/12/21.
-//
-
-
-//
-//  main.cpp
-//  Lab
-//
-//  Created by Nikitha Srikanth on 13/12/21.
-//
-
 //#include <iostream>
 //#include <GLUT/GLUT.h>
 //#include <openGL/openGL.h>
 //
 //int flag = 0;
 //int x1,x2,y1,y2,p,i;
-
+//
 //void drawPixel(int x, int y){
 //    glColor3f(1,0,0);
 //    glBegin(GL_POINTS);

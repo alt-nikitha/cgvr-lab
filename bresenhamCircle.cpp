@@ -1,9 +1,4 @@
-//
-//  bresenhamCircle.cpp
-//  Lab
-//
-//  Created by Nikitha Srikanth on 14/12/21.
-//
+
 
 //#include<iostream>
 //#include<openGL/openGL.h>
